@@ -7,8 +7,9 @@
 //
 
 #import "EBMailButtonViewController.h"
+#import <MessageUI/MessageUI.h>
 
-@interface EBMailButtonViewController ()
+@interface EBMailButtonViewController () <MFMailComposeViewControllerDelegate>
 
 @end
 
@@ -16,7 +17,26 @@
 
 - (IBAction)sendEmail:(id)sender {
 
+    MFMailComposeViewController *mailViewController = [[MFMailComposeViewController alloc] init];
     
+    mailViewController.mailComposeDelegate = self;
+    
+    [mailViewController setSubject:@"Subject"];
+    [mailViewController setMessageBody:@"body here" isHTML:NO];
+    
+    if ([MFMailComposeViewController canSendMail]) {
+        [self presentViewController:mailViewController animated:yes completion:nil];
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Can't send mail!" message:@"set up an email address and try again!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    }
+    
+    [self presentViewController:mailViewController animated:YES completion:nil];
+    
+}
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
+    
+    [controller dismissViewControllerAnimated:YES completion:nil];
     
 }
 
